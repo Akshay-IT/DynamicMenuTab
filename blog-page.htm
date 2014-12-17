@@ -1,0 +1,333 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title></title>
+    <style type="text/css">
+        a
+        {
+            width: 100%;
+        }
+        *
+        {
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            box-sizing: border-box;
+        }
+        .main_wraper
+        {
+            width: 100%;
+            position: relative;
+        }
+        .tab_module_container
+        {
+            background: none repeat scroll 0 0 #f1f1f1;
+            margin: auto;
+            padding: 40px 204px 45px;
+            width: 1280px;
+        }
+        .tab_wraper
+        {
+            width: 100%;
+            padding: 0px;
+            margin: 0px;
+        }
+        .tab_tabs
+        {
+            border-top: 1px solid #D0D5DC;
+            border-right: 1px solid #D0D5DC;
+            float: left;
+            width: 100%;
+        }
+        .tab_tabs ul
+        {
+            margin: 0px;
+            padding: 0px;
+            display: table;
+        }
+        #tab_tabs_ul li.current
+        {
+            background: #fff;
+            color: #006eb7;
+            border-bottom: 1px solid #fff;
+        }
+        .tab_tabs > ul > li
+        {
+            list-style: none;
+            min-height: 39px;
+            height: auto;
+            float: left;
+            background-color: #ebeced;
+            text-align: center;
+            border-left: 1px solid #D0D5DC;
+            border-bottom: 1px solid #D0D5DC;
+            cursor: pointer;
+            line-height: 17px;
+        }
+        .tab_tabs .tab_tabs_lastTab
+        {
+            width: 75px;
+            display: none;
+            position: relative;
+            padding: 0px;
+        }
+        .tab_tabs .tab_tabs_lastTab span
+        {
+            padding: 10px 20px;
+            display: block;
+            height: 100%;
+        }
+        .tab_Container_div
+        {
+            background: #fff;
+            border-bottom: 1px solid #D0D5DC;
+            border-right: 1px solid #D0D5DC;
+            border-left: 1px solid #D0D5DC;
+            padding: 15px;
+            float: left;
+            width: 100%;
+        }
+        .tab_tabs .tab_tabs_lastTab .menu_tab_dropdown
+        {
+            position: absolute;
+            min-width: 200px;
+            overflow: auto;
+            right: -1px;
+            margin-top: -1px;
+            border-top: 1px solid #D0D5DC;
+            border-left: 1px solid #D0D5DC;
+            border-right: 1px solid #D0D5DC;
+            border-bottom: 1px solid #D0D5DC;
+            background-color: #ececee;
+            display: none;
+            z-index: 1012;
+        }
+        .tab_tabs .tab_tabs_lastTab .menu_tab_dropdown li
+        {
+            display: block;
+            text-align: left;
+            width: 100% !important;
+        }
+        
+        .menu_tab_dropdown_li
+        {
+            border-left: none !important;
+            border-bottom: 1px solid #D0D5DC;
+            color: #5a626e;
+        }
+        
+        #tab_tabs_ul li a
+        {
+            color: #5a626e;
+            text-decoration: none;
+            padding: 10px 20px 10px;
+            display: inline-block;
+            height: 100%;
+        }
+        .tab_Container_div .Inner_Tab_content
+        {
+            width: 660px;
+            padding: 20px;
+            display: none;
+        }
+        #tab1
+        {
+            display: inline-block;
+        }
+        @media (max-width: 1279px)
+        {
+            .tab_module_container
+            {
+                background: none repeat scroll 0 0 #f1f1f1;
+                margin: auto;
+                padding: 38px 64px 60px;
+                width: 1000px;
+                display: table;
+            }
+        }
+        @media (min-width: 1280px)
+        {
+            .tab_module_container
+            {
+                background: none repeat scroll 0 0 #f1f1f1;
+                margin: auto;
+                padding: 38px 129px 60px;
+                width: 1280px;
+                display: table;
+            }
+        }
+    </style>
+    <!--<link href="Style/wp_tabs_module.css" rel="stylesheet" />-->
+    <script type="text/javascript" src="Js/jquery-1.11.0.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var dropdown_li_position;
+            var li_position;
+            var li_position_temp;
+            var dropdown_flag;
+
+            tab_width_resize();
+            $(window).resize(function () {
+                tab_width_resize();//Caliing tab width resize func when size of brower change.
+            });
+            $('#tab_tabs_ul .activetab').addClass('current');
+            $('#tab_tabs_ul .menu_tab').on('click', function (e) {
+                e.preventDefault();
+                $('#tab_tabs_ul .menu_tab.current').removeClass('current');
+                $(this).addClass('current');
+            });
+            $('#menu_tab_dropdown li').on('click', function (e) {
+                e.preventDefault();
+                $(this).addClass('current');
+            });
+
+            $('.tab_tabs_lastTab span').click(function () {
+                $(this).next('#menu_tab_dropdown').toggle();//Opening dropdown on click event
+            });
+
+            $(document).click(function (e) {
+                var target = e.target;
+                if (!$(target).is('.tab_tabs_lastTab span') && !$(target).parents().is('.tab_tabs_lastTab span')) {
+                    $('#menu_tab_dropdown').hide();
+                }
+            });
+
+            equalize_tab_height();
+
+            function tab_width_resize() {
+                var menu_tab_length = $("#tab_tabs_ul .menu_tab").length; //Getting number of tabs
+                if (menu_tab_length > 6) {
+                    var menu_tab_width = $(".tab_tabs").width(); //Getting width of parent tab of div having ul
+                    var menu_tab_new_width = (menu_tab_width - 75) / 6;
+                    $(".menu_tab").css("width", menu_tab_new_width);
+                    $(".tab_tabs_lastTab").css("display", "inline-block");
+                    $("#tab_tabs_ul .menu_tab:nth-child(n+7)").css("display", "inline-block"); //Hiding tabs from 7th position
+                    var cnt = 1;
+                    $("#tab_tabs_ul .menu_tab:nth-child(n+7)").each(function () {
+                        $(this).addClass("menu_tab_dropdown_li");
+                        $(this).addClass("dropdown_tab_identify"); // This class for identify from dropdown menu                        
+                        $(".tab_tabs_lastTab ul").append($(this));
+                        $(this).attr('id', cnt);
+                        cnt++;
+                    });
+                }
+                else {
+                    var menu_tab_width = $(".tab_tabs").width();
+                    var menu_tab_new_width = menu_tab_width / menu_tab_length;
+                    $(".menu_tab").css("width", menu_tab_new_width);
+                }
+            }
+
+            function equalize_tab_height() {
+                var parantsHeight = $('#tab_tabs_ul').height();
+                $('#tab_tabs_ul li').css("height", parantsHeight);
+                $('#menu_tab_dropdown').css("top", parantsHeight);
+            }
+
+            $("#tab_tabs_ul li a").click(function (event) {
+                event.preventDefault();
+                $(this).parent().addClass("activetab current");
+                $(this).parent().siblings().removeClass("activetab current");
+                var tab = $(this).attr("href");
+                $(".Inner_Tab_content").not(tab).css("display", "none");
+                $(tab).fadeIn();
+                if (dropdown_flag == true) {
+                    sixth_tab_click();
+                }
+            });
+
+
+            $(".dropdown_tab_identify").on('click', function () {
+                dropdown_li_position = $(this).attr('id');
+                if ($("#tab_tabs_ul li").hasClass("dropdown_tab_identify")) {
+                    if (dropdown_flag != true) {
+                        $('#tab_tabs_ul li:eq(0)').before($(this).removeClass('menu_tab_dropdown_li dropdown_tab_identify'));
+                        $('#menu_tab_dropdown li:eq(0)').before($('#tab_tabs_ul .menu_tab:eq(6)').addClass('menu_tab_dropdown_li dropdown_tab_identify dropdown'));
+                        $('#tab_tabs_ul menu_tab:eq(6)').remove();
+                    }
+                    else if (dropdown_flag == true) {
+                        var li_id = "menu_tab_dropdown li:eq(" + li_position + ")";
+                        $('#' + li_id).after($('#tab_tabs_ul li:eq(0)'));
+                        $('#tab_tabs_ul li:eq(0)').before($(this).removeClass('menu_tab_dropdown_li'));
+                        equalize_tab_height();
+                    }
+                    li_position = dropdown_li_position - 1;
+                    dropdown_flag = true;
+                }
+            });
+
+            //On click of sixth ul tab in dropdownlist
+            function sixth_tab_click() {
+                $(".menu_tab_dropdown .dropdown").unbind().on('click', function () {
+                    $("#tab_tabs_ul .menu_tab:nth-child(n+0)").each(function () {
+                        $(this).removeClass("activetab current");
+                    });
+                    $('#tab_tabs_ul .menu_tab:eq(5)').after($(this).removeClass("menu_tab_dropdown_li dropdown_tab_identify dropdown"));
+                    $(this).unbind();
+                    $(this).addClass("activetab current");
+                    dropdown_flag = false;
+                    if (li_position != 0) {
+                        li_position = li_position - 1;
+                        var li_id = "menu_tab_dropdown li:eq(" + li_position + ")";
+                        $("#" + li_id).after($('#tab_tabs_ul li:eq(0)'));
+                        $("#" + li_id).removeClass("current active");
+                    }
+                    else {
+                        var li_id = "menu_tab_dropdown li:eq(" + li_position + ")";
+                        $("#" + li_id).before($('#tab_tabs_ul li:eq(0)'));
+                        $("#" + li_id).removeClass("current active");
+                    }
+                    equalize_tab_height();
+                });
+            }
+        });
+    </script>
+</head>
+<body>
+    <div class="main_wraper">
+        <div class="tab_module_container">
+            <div class="tab_wraper">
+                <div class="tab_tabs">
+                    <ul id="tab_tabs_ul">
+                        <li class="menu_tab activetab" data-index="1"><a href="#tab1">Menu Tab 1</a></li>
+                        <li class="menu_tab"><a href="#tab2">Menu Tab 2</a></li>
+                        <li class="menu_tab"><a href="#tab3">Menu Tab 3</a></li>
+                        <li class="menu_tab"><a href="#tab4">Menu Tab 4</a></li>
+                        <li class="menu_tab"><a href="#tab5">Menu Tab 5</a></li>
+                        <li class="menu_tab"><a href="#tab6">Menu Tab 6</a></li>
+                        <li class="menu_tab"><a href="#tab7">Menu Tab 7</a></li>
+                        <li class="menu_tab"><a href="#tab8">Menu Tab 8</a></li>
+                        <li class="menu_tab"><a href="#tab9">Menu Tab 9</a></li>
+                        <li class="menu_tab"><a href="#tab10">Menu Tab 10</a></li>
+                        <li class="tab_tabs_lastTab"><span>.....</span>
+                            <ul id="menu_tab_dropdown" class="menu_tab_dropdown" style="display: none;">
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+                <div class="tab_Container_div tab">
+                    <div id="tab1" class="Inner_Tab_content">
+                        Tab 1 content</div>
+                    <div id="tab2" class="Inner_Tab_content">
+                        Tab 2 content</div>
+                    <div id="tab3" class="Inner_Tab_content">
+                        Tab 3 content</div>
+                    <div id="tab4" class="Inner_Tab_content">
+                        Tab 4 content</div>
+                    <div id="tab5" class="Inner_Tab_content">
+                        Tab 5 content</div>
+                    <div id="tab6" class="Inner_Tab_content">
+                        Tab 6 content</div>
+                    <div id="tab7" class="Inner_Tab_content">
+                        Tab 7 content</div>
+                    <div id="tab8" class="Inner_Tab_content">
+                        Tab 8 content</div>
+                    <div id="tab9" class="Inner_Tab_content">
+                        Tab 9 content</div>
+                    <div id="tab10" class="Inner_Tab_content">
+                        Tab 10 content</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
